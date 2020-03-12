@@ -1,0 +1,72 @@
+{
+    "keys": {
+        "company": {
+            "type": "string",
+            "rules": {
+                "possible_values": [
+                    "Microsoft",
+                    "Oracle",
+                    "SAP",
+                    "Adobe Inc.",
+                    "Salesforce",
+                    "VMware",
+                    "Amazon", 
+                    "Google", 
+                    "JD.com", 
+                    "Alibaba",
+                    "Facebook",
+                    "Tencent",
+                    "Netflix",
+                    "PayPal",
+                    "Booking",
+                    "Baidu",
+                    "eBay"
+                ],
+                "chance": 100
+            }
+        },
+        "value": {
+            "type": "double",
+            "rules": {
+                "min": "0.0",
+                "max": "100.0",
+                "precision": 1,
+                "chance": 100                
+            }
+        },
+        "drop": {
+            "type": "double",
+            "rules": {
+                "min": "0.0",
+                "max": "50.0",
+                "precision": 1,
+                "chance": 100                
+            }
+        },
+        "variation": {
+            "type": "double",
+            "rules": {
+                "min": "0.0",
+                "max": "1.0",
+                "precision": 2,
+                "chance": 100                
+            }
+        },
+        "date": {
+            "type": "date",
+            "rules": {
+                "start_date": "1/1/2010",
+                "start_format": "%m/%d/%Y",
+                "end_date": "1/1/2023",
+                "end_format": "%m/%d/%Y",
+                "chance": 100
+            }
+        }
+    },
+    "publication_generation": {
+        "number_of_publications": 10000
+    },
+    "subscription_generation": {
+        "number_of_subscriptions": 100  
+    }
+}
