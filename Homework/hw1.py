@@ -22,12 +22,6 @@ class KVPair:
             return f'({self.name}, {self.value:.2f})'
         return f'({self.name}, {self.value})'
 
-    def load(self):
-        return
-
-    def evaluate_rule(self):
-        return
-
 class KVPairGenerator:
 
     def __init__(self, name, config):
@@ -100,10 +94,140 @@ class PublicationGenerator:
 
         return publication_list
 
+class SubscriptionRule:
+    
+    def __init__(self, _kv, _operator):
+        self.kv = _kv
+        self.operator = _operator
+        
+    def __str__(self):
+        if self.kv.type == 'date':
+            return f'({self.kv.name}, {self.operator}, {datetime.datetime.strftime(self.kv.value, "%d.%m.%Y")})'
+        elif self.kv.type == 'string':
+            return f'({self.kv.name}, {self.operator}, "{self.kv.value}")'
+        elif self.kv.type == 'double':
+            return f'({self.kv.name}, {self.operator}, {self.kv.value:.2f})'
+        return f'({self.kv.name}, {self.operator}, {self.kv.value})'
+
+    def evaluate(self, against):
+        pass
+
+class Subscription:
+
+    def __init__(self):
+        self.rules = []
+
+    def __str__(self):
+        return  '{' + ';'.join(str(x) for x in self.rules) + '}'
+        
+    def add_rule(self, rule):
+        self.rules.append(rule)
+
+class SubscriptionGenerator:
+
+    def __init__(self, config):
+        self.number_of_subscriptions = config['number_of_subscriptions']
+        self.keys = [k for k in config_dict['keys']]
+
+    def generate_subscriptions(self):
+
+        subscriptions_left = self.number_of_subscriptions
+
+        key_data = {}
+
+        for key in self.keys:
+            data = {}
+
+            rules = config_dict['keys'][key]['subscription_rules']
+
+            data['percentage'] = rules['key_percentage']
+            
+            if data['percentage'] == 0:
+                data['remaining'] = -1
+                data['subtract'] = 0
+            else:
+                data['remaining'] = subscriptions_left
+                data['subtract'] = subscriptions_left/data['percentage']
+
+            operators = {}
+            op_total_percentage = 0
+
+            for op in rules['operator_percentages']:
+                op_data = {'percentage': rules['operator_percentages'][op]}
+                
+                if op_data['percentage'] == 0:
+                    op_data['remaining'] = -1
+                    op_data['subtract'] = 0
+                else:
+                    op_data['remaining'] = subscriptions_left
+                    op_data['subtract'] = subscriptions_left/data['percentage']
+                operators[op] = op_data
+
+                op_total_percentage += op_data['percentage']
+
+            if op_total_percentage < 100:
+                op_data = {
+                    'percentage': 100 - op_total_percentage,
+                    'remaining': subscriptions_left,
+                    'subtract': subscriptions_left/(100 - op_total_percentage)
+                }
+                operators['?'] = op_data
+            
+            data['operators'] = operators
+            key_data[key] = data
+
+        subscriptions = []
+
+        while subscriptions_left > 0:
+            
+            sub = Subscription()
+            keys = []
+
+            for k in key_data:
+
+                kd = key_data[k]
+
+                if kd['remaining'] >= subscriptions_left:
+                    keys.append(k)
+                    kd['remaining'] -= kd['subtract']
+
+            for k in keys:
+
+                kd = key_data[k]
+                op_data = kd['operators']
+
+                max_remaining = -1
+                chosen_op = '?'
+
+                for op in op_data:
+                    if op_data[op]['remaining'] > max_remaining:
+                        max_remaining = op_data[op]['remaining']
+                        chosen_op = op
+            
+                op_data[chosen_op]['remaining'] -= op_data[chosen_op]['subtract']
+
+                if chosen_op == '?':
+                    key_type = config_dict['keys'][k]['type']
+                    chosen_op = random.choice(config_dict['types'][key_type]['operators'])
+
+                kv = KVPairGenerator(k, config_dict['keys'][k]).generate_pair()
+                sub_rule = SubscriptionRule(kv, chosen_op)
+                sub.add_rule(sub_rule)
+
+            subscriptions.append(sub)
+            subscriptions_left -= 1
+        
+        return subscriptions
+
 
 if __name__ == '__main__':
 
-    pg = PublicationGenerator(config_dict['publication_generation'])
+    # pg = PublicationGenerator(config_dict['publication_generation'])
 
-    for p in pg.generate_all():
-        print(p)
+    # for p in pg.generate_all():
+    #     print(p)
+
+    sg = SubscriptionGenerator(config_dict['subscription_generation'])
+
+    for s in sg.generate_subscriptions():
+        print(s)

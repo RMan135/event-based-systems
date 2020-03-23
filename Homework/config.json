@@ -1,4 +1,32 @@
 {
+    "types": {
+        "string": {
+            "operators": [
+                "=",
+                "!="
+            ]
+        },
+        "double": {
+            "operators": [
+                "=",
+                "!=",
+                ">",
+                ">=",
+                "<",
+                "<="
+            ]
+        },
+        "date": {
+            "operators": [
+                "=",
+                "!=",
+                ">",
+                ">=",
+                "<",
+                "<="
+            ]
+        }
+    },
     "keys": {
         "company": {
             "type": "string",
@@ -21,8 +49,13 @@
                     "Booking",
                     "Baidu",
                     "eBay"
-                ],
-                "chance": 100
+                ]
+            },
+            "subscription_rules": {
+                "operator_percentages": {
+                    "=": 50
+                },
+                "key_percentage": 80
             }
         },
         "value": {
@@ -30,8 +63,14 @@
             "rules": {
                 "min": "0.0",
                 "max": "100.0",
-                "precision": 1,
-                "chance": 100                
+                "precision": 1  
+            },
+            "subscription_rules": {
+                "operator_percentages": {
+                    "<": 25,
+                    ">": 25
+                },
+                "key_percentage": 100
             }
         },
         "drop": {
@@ -39,8 +78,14 @@
             "rules": {
                 "min": "0.0",
                 "max": "50.0",
-                "precision": 1,
-                "chance": 100                
+                "precision": 1       
+            },
+            "subscription_rules": {
+                "operator_percentages": {
+                    "=": 25,
+                    ">": 50
+                },
+                "key_percentage": 75
             }
         },
         "variation": {
@@ -48,8 +93,13 @@
             "rules": {
                 "min": "0.0",
                 "max": "1.0",
-                "precision": 2,
-                "chance": 100                
+                "precision": 2                
+            },
+            "subscription_rules": {
+                "operator_percentages": {
+                    ">": 75
+                },
+                "key_percentage": 100
             }
         },
         "date": {
@@ -58,15 +108,20 @@
                 "start_date": "1/1/2010",
                 "start_format": "%m/%d/%Y",
                 "end_date": "1/1/2023",
-                "end_format": "%m/%d/%Y",
-                "chance": 100
+                "end_format": "%m/%d/%Y"
+            },
+            "subscription_rules": {
+                "operator_percentages": {
+                    "<": 25
+                },
+                "key_percentage": 80
             }
         }
     },
     "publication_generation": {
-        "number_of_publications": 10000
+        "number_of_publications": 100
     },
     "subscription_generation": {
-        "number_of_subscriptions": 100  
+        "number_of_subscriptions": 100
     }
 }
