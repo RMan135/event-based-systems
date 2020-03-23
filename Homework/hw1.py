@@ -222,10 +222,12 @@ class SubscriptionGenerator:
 
 if __name__ == '__main__':
 
-    # pg = PublicationGenerator(config_dict['publication_generation'])
+    pg = PublicationGenerator(config_dict['publication_generation'])
 
-    # for p in pg.generate_all():
-    #     print(p)
+    for p in pg.generate_all():
+        print(p)
+
+    print('')
 
     sg = SubscriptionGenerator(config_dict['subscription_generation'])
 
